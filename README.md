@@ -148,11 +148,8 @@ int main(int argc, char** argv) {
 instructions:
 ```bash
 # first clone this repository:
-$> git clone https://github.com/azadkuh/qhttp.git
+$> git clone --recursive https://github.com/azadkuh/qhttp.git
 $> cd qhttp
-
-# prepare dependencies:
-$qhttp/> ./update-dependencies.sh
 
 # now build the library and the examples
 $qhttp/> qmake -r qhttp.pro
