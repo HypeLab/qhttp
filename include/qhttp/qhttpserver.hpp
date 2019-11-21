@@ -14,6 +14,7 @@
 
 #include <QObject>
 #include <QHostAddress>
+#include <QWebSocket>
 ///////////////////////////////////////////////////////////////////////////////
 namespace qhttp {
 namespace ssl{ struct Config; }
@@ -94,7 +95,11 @@ signals:
      * @sa incomingConnection(); */
     void newConnection(QHttpConnection* connection);
 
+    void newWsConnection(QWebSocket* socket);
+
 protected:
+    void forwardWsConnection();
+
     /// returns the tcp server instance if the backend() == ETcpSocket
     QTcpServer* tcpServer() const;
 
@@ -114,6 +119,9 @@ protected:
      *
      * @param connection New incoming connection. */
     virtual void incomingConnection(QHttpConnection* connection);
+
+    /** Transfer the tcp socket to QWebsocketServer **/
+    void onWebsocketUpgrade(QTcpSocket* socket);
 
     /** overrides QTcpServer::incomingConnection() to make a new
      * QHttpConnection.

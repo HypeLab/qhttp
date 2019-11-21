@@ -66,6 +66,9 @@ signals:
     /** emitted when the tcp/local socket, disconnects. */
     void disconnected();
 
+    /** emitted when we receive "Connection: upgrade" header */
+    void newWebsocketUpgrade(QTcpSocket* socket);
+
 protected:
     explicit QHttpConnection(QHttpServer *parent);
     explicit QHttpConnection(QHttpConnectionPrivate&, QHttpServer*);

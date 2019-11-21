@@ -14,6 +14,7 @@
 
 #include <QTcpSocket>
 #include <QLocalSocket>
+#include <QWebSocketServer>
 #include <QUrl>
 ///////////////////////////////////////////////////////////////////////////////
 namespace qhttp {
@@ -27,7 +28,7 @@ namespace details {
 class QSocket
 {
 public:
-    void close() {
+    inline void close() {
         if ( itcpSocket ) {
             itcpSocket->disconnectFromHost();
             itcpSocket->close();
@@ -37,7 +38,7 @@ public:
             ilocalSocket->close();
     }
 
-    void release() {
+    inline void release() {
         close();
         if ( itcpSocket )
             itcpSocket->deleteLater();
@@ -49,7 +50,7 @@ public:
         ilocalSocket = nullptr;
     }
 
-    void flush() {
+    inline void flush() {
         if ( itcpSocket )
             itcpSocket->flush();
 
@@ -57,7 +58,7 @@ public:
             ilocalSocket->flush();
     }
 
-    bool isOpen() const {
+    inline bool isOpen() const {
         if ( ibackendType == ETcpSocket    &&    itcpSocket )
             return itcpSocket->isOpen()
                 && itcpSocket->state() == QTcpSocket::ConnectedState;
@@ -69,27 +70,39 @@ public:
         return false;
     }
 
-    void connectTo(const QUrl& url) {
+    inline void connectTo(const QUrl& url) {
         if ( ilocalSocket )
             ilocalSocket->connectToServer(url.path());
     }
 
-    void connectTo(const QString& host, quint16 port) {
+    inline void connectTo(const QString& host, quint16 port) {
         if ( itcpSocket )
             itcpSocket->connectToHost(host, port);
     }
 
-    qint64 readRaw(char* buffer, int maxlen) {
-        if ( itcpSocket )
+    inline qint64 readRaw(char* buffer, qint64 maxlen) {
+        if ( itcpSocket ) {
+            itcpSocket->startTransaction();
             return itcpSocket->read(buffer, maxlen);
-
-        else if ( ilocalSocket )
+        } else if ( ilocalSocket ) {
+            ilocalSocket->startTransaction();
             return ilocalSocket->read(buffer, maxlen);
-
+        }
         return 0;
     }
 
-    void writeRaw(const QByteArray& data) {
+    inline QByteArray readRaw() {
+        if ( itcpSocket) {
+            itcpSocket->startTransaction();
+            return itcpSocket->readAll();
+        } else if ( ilocalSocket ) {
+            ilocalSocket->startTransaction();
+            return ilocalSocket->readAll();
+        }
+        return QByteArray();
+    }
+
+    inline void writeRaw(const QByteArray& data) {
         if ( itcpSocket )
             itcpSocket->write(data);
 
@@ -97,7 +110,7 @@ public:
             ilocalSocket->write(data);
     }
 
-    qint64 bytesAvailable() {
+    inline qint64 bytesAvailable() {
         if ( itcpSocket )
             return itcpSocket->bytesAvailable();
 
@@ -107,7 +120,7 @@ public:
         return 0;
     }
 
-    void disconnectAllQtConnections() {
+    inline void disconnectAllQtConnections() {
         if ( itcpSocket )
             QObject::disconnect(itcpSocket, 0, 0, 0);
 
@@ -115,10 +128,26 @@ public:
             QObject::disconnect(ilocalSocket, 0, 0, 0);
     }
 
+    inline void startTransaction() {
+        if (itcpSocket) itcpSocket->startTransaction();
+        if (ilocalSocket) ilocalSocket->startTransaction();
+    }
+
+    inline void rollbackTransaction() {
+        if (itcpSocket) itcpSocket->rollbackTransaction();
+        if (ilocalSocket) ilocalSocket->rollbackTransaction();
+    }
+
+    inline void commitTransaction() {
+        if (itcpSocket) itcpSocket->commitTransaction();
+        if (ilocalSocket) ilocalSocket->commitTransaction();
+    }
+
 public:
-    TBackend      ibackendType = ETcpSocket;
-    QTcpSocket*   itcpSocket   = nullptr;
-    QLocalSocket* ilocalSocket = nullptr;
+    TBackend          ibackendType = ETcpSocket;
+    QTcpSocket*       itcpSocket   = nullptr;
+    QLocalSocket*     ilocalSocket = nullptr;
+    QWebSocketServer* iwebSocket = nullptr;
 }; // class QSocket
 
 ///////////////////////////////////////////////////////////////////////////////

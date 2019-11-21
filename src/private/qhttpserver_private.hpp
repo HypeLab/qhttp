@@ -18,6 +18,7 @@
 
 #include <QTcpServer>
 #include <QLocalServer>
+#include <QWebSocketServer>
 ///////////////////////////////////////////////////////////////////////////////
 namespace qhttp {
 namespace server {
@@ -51,18 +52,19 @@ public:
     using TLocalServer = QScopedPointer<BackendServer<QLocalServer>>;
 
 public:
-    quint32         itimeOut = 0;
-    ServerHandler   ihandler = nullptr;
+    quint32          itimeOut = 0;
+    ServerHandler    ihandler = nullptr;
 
-    TBackend        ibackend = ETcpSocket;
+    TBackend         ibackend = ETcpSocket;
 
-    TTcpServer      itcpServer;
-    TLocalServer    ilocalServer;
+    TTcpServer       itcpServer;
+    TLocalServer     ilocalServer;
+    QWebSocketServer iwsServer;
 
-    ssl::Config     isslConfig;
+    ssl::Config      isslConfig;
 
 public:
-    explicit    QHttpServerPrivate() = default;
+    explicit    QHttpServerPrivate() : iwsServer("QHTTP", QWebSocketServer::NonSecureMode) {}
 
     virtual    ~QHttpServerPrivate() = default;
 

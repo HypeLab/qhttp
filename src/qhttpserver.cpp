@@ -7,6 +7,7 @@ namespace server {
 
 QHttpServer::QHttpServer(QObject *parent)
     : QObject(parent), d_ptr(new QHttpServerPrivate) {
+  connect(&d_func()->iwsServer, &QWebSocketServer::newConnection, this, &QHttpServer::forwardWsConnection);
 }
 
 QHttpServer::QHttpServer(QHttpServerPrivate &dd, QObject *parent)
@@ -91,6 +92,13 @@ QHttpServer::backendType() const {
     return d_func()->ibackend;
 }
 
+void
+QHttpServer::forwardWsConnection() {
+    if (d_func()->iwsServer.hasPendingConnections()) {
+        emit newWsConnection(d_func()->iwsServer.nextPendingConnection());
+    }
+}
+
 QTcpServer*
 QHttpServer::tcpServer() const {
     Q_D(const QHttpServer);
@@ -119,12 +127,22 @@ QHttpServer::incomingConnection(qintptr handle) {
     conn->setSocketDescriptor(handle, backendType());
     conn->setTimeOut(d_func()->itimeOut);
 
+    connect(conn, &QHttpConnection::newWebsocketUpgrade,
+            this, &QHttpServer::onWebsocketUpgrade);
+
     emit newConnection(conn);
 
     if ( d->ihandler )
         QObject::connect(conn, &QHttpConnection::newRequest, d->ihandler);
     else
         incomingConnection(conn);
+}
+
+void
+QHttpServer::onWebsocketUpgrade(QTcpSocket* socket) {
+    socket->setParent(&d_func()->iwsServer);
+    d_func()->iwsServer.handleConnection(socket);
+    forwardWsConnection();
 }
 
 void
