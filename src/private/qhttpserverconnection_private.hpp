@@ -94,14 +94,14 @@ public:
 
 public:
     int  messageBegin(http_parser* parser);
-    int  url(http_parser* parser, const char* at, size_t length);
-    int  status(http_parser*, const char*, size_t) {
+    int  url(http_parser* parser, const char* at, int length);
+    int  status(http_parser*, const char*, int) {
         return 0;   // not used in parsing incoming request.
     }
-    int  headerField(http_parser* parser, const char* at, size_t length);
-    int  headerValue(http_parser* parser, const char* at, size_t length);
+    int  headerField(http_parser* parser, const char* at, int length);
+    int  headerValue(http_parser* parser, const char* at, int length);
     int  headersComplete(http_parser* parser);
-    int  body(http_parser* parser, const char* at, size_t length);
+    int  body(http_parser* parser, const char* at, int length);
     int  messageComplete(http_parser* parser);
 
 private:

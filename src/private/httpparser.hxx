@@ -51,19 +51,19 @@ public: // callback functions for http_parser_settings
     }
 
     static int onUrl(http_parser* p, const char* at, size_t length) {
-        return me(p)->url(p, at, length);
+        return me(p)->url(p, at, static_cast<int>(length));
     }
 
     static int onStatus(http_parser* p, const char* at, size_t length) {
-        return me(p)->status(p, at, length);
+        return me(p)->status(p, at, static_cast<int>(length));
     }
 
     static int onHeaderField(http_parser* p, const char* at, size_t length) {
-        return me(p)->headerField(p, at, length);
+        return me(p)->headerField(p, at, static_cast<int>(length));
     }
 
     static int onHeaderValue(http_parser* p, const char* at, size_t length) {
-        return me(p)->headerValue(p, at, length);
+        return me(p)->headerValue(p, at, static_cast<int>(length));
     }
 
     static int onHeadersComplete(http_parser* p) {
@@ -71,7 +71,7 @@ public: // callback functions for http_parser_settings
     }
 
     static int onBody(http_parser* p, const char* at, size_t length) {
-        return me(p)->body(p, at, length);
+        return me(p)->body(p, at, static_cast<int>(length));
     }
 
     static int onMessageComplete(http_parser* p) {

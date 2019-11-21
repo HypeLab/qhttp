@@ -78,7 +78,7 @@ QHttpConnectionPrivate::messageBegin(http_parser*) {
 }
 
 int
-QHttpConnectionPrivate::url(http_parser*, const char* at, size_t length) {
+QHttpConnectionPrivate::url(http_parser*, const char* at, int length) {
     Q_ASSERT(ilastRequest);
 
     itempUrl.append(at, length);
@@ -86,7 +86,7 @@ QHttpConnectionPrivate::url(http_parser*, const char* at, size_t length) {
 }
 
 int
-QHttpConnectionPrivate::headerField(http_parser*, const char* at, size_t length) {
+QHttpConnectionPrivate::headerField(http_parser*, const char* at, int length) {
     if ( ilastRequest == nullptr )
         return 0;
 
@@ -110,7 +110,7 @@ QHttpConnectionPrivate::headerField(http_parser*, const char* at, size_t length)
 }
 
 int
-QHttpConnectionPrivate::headerValue(http_parser*, const char* at, size_t length) {
+QHttpConnectionPrivate::headerValue(http_parser*, const char* at, int length) {
     if ( ilastRequest == nullptr )
         return 0;
 
@@ -176,7 +176,7 @@ QHttpConnectionPrivate::headersComplete(http_parser* parser) {
 }
 
 int
-QHttpConnectionPrivate::body(http_parser*, const char* at, size_t length) {
+QHttpConnectionPrivate::body(http_parser*, const char* at, int length) {
     if ( ilastRequest == nullptr )
         return 0;
 

@@ -37,11 +37,11 @@ public:
             ibody.reserve(atMost);
     }
 
-    bool append(const char* data, size_t length) {
+    bool append(const char* data, int length) {
         if ( !icollectRequired ) // not allowed to collect data
             return false;
 
-        int newLength = ibody.length() + (int) length;
+        int newLength = ibody.length() + length;
 
         if ( icollectCapacity > 0    &&    newLength > icollectCapacity )
             return false; // the capacity is full
