@@ -177,15 +177,14 @@ class QHttpResponsePrivate;
 #   if _MSC_VER < 1900
 #       error this old msvc++ does not support c++14.
 #   endif
-
-#   if defined(_DLL) // compiled as dll
+#   if defined(QHTTP_STATIC)
+#       define QHTTP_API
+#   else
 #       if defined(QHTTP_EXPORT)
 #           define QHTTP_API __declspec(dllexport)
 #       else
 #           define QHTTP_API __declspec(dllimport)
 #       endif
-#   else // static library
-#       define QHTTP_API
 #   endif
 #endif
 
