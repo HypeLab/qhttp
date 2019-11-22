@@ -77,6 +77,40 @@ QHttpServer::stopListening() {
     }
 }
 
+QHostAddress
+QHttpServer::serverAddress() const {
+    const Q_D(QHttpServer);
+
+    if ( d->itcpServer ) return d->itcpServer->serverAddress();
+    return QHostAddress::Null;
+}
+
+quint16
+QHttpServer::serverPort() const {
+    const Q_D(QHttpServer);
+
+    if ( d->itcpServer ) return d->itcpServer->serverPort();
+    return 0;
+}
+
+QAbstractSocket::SocketError
+QHttpServer::serverError() const {
+    const Q_D(QHttpServer);
+
+    if ( d->itcpServer ) return d->itcpServer->serverError();
+    if ( d->ilocalServer ) return d->ilocalServer->serverError();
+    return QAbstractSocket::UnknownSocketError;
+}
+
+QString
+QHttpServer::errorString() const {
+    const Q_D(QHttpServer);
+
+    if ( d->itcpServer ) return d->itcpServer->errorString();
+    if ( d->ilocalServer ) return d->ilocalServer->errorString();
+    return QString();
+}
+
 quint32
 QHttpServer::timeOut() const {
     return d_func()->itimeOut;

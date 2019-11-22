@@ -71,6 +71,14 @@ public:
     /** closes the server and stops from listening. */
     void stopListening();
 
+    QHostAddress serverAddress() const;
+
+    quint16 serverPort() const;
+
+    QAbstractSocket::SocketError serverError() const;
+
+    QString errorString() const;
+
     /** returns timeout value [mSec] for open connections (sockets).
      *  @sa setTimeOut(). */
     quint32 timeOut()const;
