@@ -24,14 +24,13 @@ public:
         return contains(key.toLower());
     }
 
-    /** checks if a header has the specified value ignoring the case of the
-     * characters. */
+    /** checks if a header has the specified value. */
     bool keyHasValue(const QByteArray& key, const QByteArray& value) const {
         if ( !contains(key) )
             return false;
 
         const QByteArray& v = QHash<QByteArray, QByteArray>::value(key);
-        return qstrnicmp(value.constData(), v.constData(), v.size()) == 0;
+        return qstrncmp(value.constData(), v.constData(), v.size()) == 0;
     }
 
     template<class Func>
