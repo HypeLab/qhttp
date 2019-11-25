@@ -26,7 +26,7 @@ public:
         if ( ifinished )
             return false;
 
-        TBase::iheaders.insert(field, value);
+        TBase::iheaders.insert(field.toLower(), value);
         return true;
     }
 
@@ -76,11 +76,12 @@ public:
         if ( ifinished    ||    iheaderWritten )
             return;
 
-        if ( TBase::iheaders.keyHasValue("Connection", "Keep-Alive") ||
-             TBase::iheaders.keyHasValue("Connection", "Upgrade") )
+        if ( TBase::iheaders.keyHasValueInsensitive("connection", "Keep-Alive") ||
+             TBase::iheaders.keyHasValueInsensitive("connection", "Upgrade") ) {
             ikeepAlive = true;
-        else
-            TBase::iheaders.insert("Connection", "close");
+        } else {
+            TBase::iheaders.insert("connection", "close");
+        }
 
         TImpl* me = static_cast<TImpl*>(this);
         me->prepareHeadersToWrite();

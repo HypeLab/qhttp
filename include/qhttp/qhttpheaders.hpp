@@ -26,11 +26,21 @@ public:
 
     /** checks if a header has the specified value. */
     bool keyHasValue(const QByteArray& key, const QByteArray& value) const {
-        if ( !contains(key) )
+        auto lowerKey = key.toLower();
+        if ( !contains(lowerKey) )
             return false;
 
-        const QByteArray& v = QHash<QByteArray, QByteArray>::value(key);
+        const QByteArray& v = QHash<QByteArray, QByteArray>::value(lowerKey);
         return qstrncmp(value.constData(), v.constData(), v.size()) == 0;
+    }
+
+    bool keyHasValueInsensitive(const QByteArray& key, const QByteArray& value) const {
+        auto lowerKey = key.toLower();
+        if ( !contains(lowerKey) )
+            return false;
+
+        const QByteArray& v = QHash<QByteArray, QByteArray>::value(lowerKey);
+        return qstrnicmp(value.constData(), v.constData(), v.size()) == 0;
     }
 
     template<class Func>
